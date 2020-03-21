@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "version": 1, 
+  "version": 1,
   "newProjectRoot": "projects",
   "projects": {
     "rod-dag": {
@@ -119,6 +119,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "rod-dag"
+    }
+  },
+  "defaultProject": "rod-dag",
+  "cli": {
+    "analytics": "48b22dd8-2bb1-4f22-9485-64344a5516e5"
+  }
 }
