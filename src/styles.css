@@ -2,6 +2,7 @@
 html, body {
   background-color: #EEABC4;
   overflow: hidden;
+  height: 100%;
 }
 
 .container {
@@ -9,7 +10,7 @@ html, body {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
 }
 
 .big-text {
