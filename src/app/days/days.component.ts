@@ -1,18 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { DaysService } from 'src/app/days/days.service';
 import { Day } from 'src/app/days/days.interface';
-import { isAfter, differenceInCalendarDays } from 'date-fns';
+import { isAfter, differenceInCalendarDays, isSameDay } from 'date-fns';
 
 @Component({
   selector: 'app-days',
   template: `
     <div class="container" *ngIf="hasLoaded">
-      <div class="big-text">{{ holidayDistance }} dagar</div>
-      <div class="small-text" *ngIf="isHalfDay">
-        till halvdag på {{ dayBeforeHoliday.halfDay }}
+      <div class="big-text" *ngIf="!holidayToday">
+        {{ holidayDistance }} dag<span *ngIf="holidayDistance > 1">ar</span>
       </div>
-      <div class="small-text" *ngIf="!isHalfDay">
+      <div class="big-text" *ngIf="holidayToday">Idag</div>
+      <div class="small-text" *ngIf="!holidayToday">
         till {{ nextHoliday.holiday }}
+      </div>
+      <div class="small-text" *ngIf="holidayToday">
+        är det {{ nextHoliday.holiday }}
       </div>
     </div>
   `,
@@ -23,33 +26,33 @@ export class DaysComponent implements OnInit {
   days: Day[];
   nextHoliday: Day;
   holidayDistance: number;
-  isHalfDay = false;
-  dayBeforeHoliday: Day;
+  holidayToday: boolean;
 
   constructor(private readonly daysService: DaysService) {}
 
   ngOnInit(): void {
     const todaysDate = new Date();
 
-    this.daysService.getDays().subscribe((days: Day[]) => {
-      this.days = days;
+    this.daysService.getDays().subscribe(
+      (days: Day[]) => {
+        this.days = days;
 
-      const holidayIndex = days.findIndex(
-        (day: Day) => day.holiday !== undefined && isAfter(day.date, todaysDate)
-      );
+        this.nextHoliday = days.find(
+          (day: Day) =>
+            day.holiday !== undefined &&
+            (isAfter(day.date, todaysDate) || isSameDay(day.date, todaysDate))
+        );
 
-      this.nextHoliday = days[holidayIndex];
-      this.dayBeforeHoliday = days[holidayIndex - 1];
-      this.isHalfDay = this.dayBeforeHoliday.halfDay !== undefined;
+        this.holidayToday = isSameDay(todaysDate, this.nextHoliday.date);
 
-      this.holidayDistance = differenceInCalendarDays(
-        this.dayBeforeHoliday.halfDay
-          ? this.dayBeforeHoliday.date
-          : this.nextHoliday.date,
-        todaysDate
-      );
+        this.holidayDistance = differenceInCalendarDays(
+          this.nextHoliday.date,
+          todaysDate
+        );
 
-      this.hasLoaded = true;
-    });
+        this.hasLoaded = true;
+      },
+      (error: any) => console.log(error)
+    );
   }
 }
