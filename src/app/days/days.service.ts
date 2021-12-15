@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class DaysService {
-  apiURL = 'https://api.dryg.net/dagar/v2.1/';
+  apiURL = 'https://sholiday.faboul.se/dagar/v2.1/';
 
   constructor(private http: HttpClient) {}
 
